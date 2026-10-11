@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Grid Flex demonstration backend - synthetic microgrid MILP scenarios
+Parameters:
+  AllowedOrigin:
+    Type: String
+    Description: Exact HTTPS frontend origin, without a trailing slash
+    AllowedPattern: 'https://[^/]+' 
+Globals:
+  Function:
+    Runtime: python3.12
+    MemorySize: 1024
+    Timeout: 30
+Resources:
+  GridFlexApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: [!Ref AllowedOrigin]
+        AllowMethods: [GET, POST, OPTIONS]
+        AllowHeaders: [content-type]
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 3
+  RunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../
+      Handler: app.lambda_handler
+      Architectures: [x86_64]
+      Environment:
+        Variables:
+          RUNS_TABLE: !Ref RunsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RunsTable
+      Events:
+        Health:
+          Type: HttpApi
+          Properties: { ApiId: !Ref GridFlexApi, Path: /api/health, Method: GET }
+        Scenario:
+          Type: HttpApi
+          Properties: { ApiId: !Ref GridFlexApi, Path: /api/scenario, Method: GET }
+        Optimize:
+          Type: HttpApi
+          Properties: { ApiId: !Ref GridFlexApi, Path: /api/optimize, Method: POST }
+        Intelligence:
+          Type: HttpApi
+          Properties: { ApiId: !Ref GridFlexApi, Path: /api/intelligence, Method: POST }
+        History:
+          Type: HttpApi
+          Properties: { ApiId: !Ref GridFlexApi, Path: /api/history, Method: GET }
+Outputs:
+  ApiBaseUrl:
+    Value: !Sub 'https://${GridFlexApi}.execute-api.${AWS::Region}.amazonaws.com'
+  DynamoDBTable:
+    Value: !Ref RunsTable

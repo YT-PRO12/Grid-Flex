@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07141d" />
+  <meta name="description" content="Grid Flex — mathematical optimization for solar-powered industrial microgrids, flexible equipment, and battery dispatch." />
+  <title>Grid Flex — Industrial Energy Intelligence</title>
+  <link rel="stylesheet" href="./styles.css?v=final-1" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Application sidebar">
+      <a class="brand" href="#overview" aria-label="Grid Flex home"><span class="brand-icon">▦</span><span>GRID <span class="accent">FLEX</span><small>ENERGY INTELLIGENCE</small></span></a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Sections">
+        <a href="#overview" class="nav-link active"><span class="nav-icon">◫</span> Overview</a>
+        <a href="#command-room" class="nav-link"><span class="nav-icon">⌁</span> Command center</a><a href="#operations" class="nav-link"><span class="nav-icon">⚑</span> Action center</a>
+        <a href="#production" class="nav-link"><span class="nav-icon">▤</span> Production planner</a>
+        <a href="#decision-lab" class="nav-link"><span class="nav-icon">◈</span> Decision laboratory</a><a href="#experiment-lab" class="nav-link"><span class="nav-icon">▧</span> Compare runs</a><a href="#forecast-risk" class="nav-link" aria-label="Forecast risk and battery economics"><span class="nav-icon">☀</span> Forecast &amp; battery</a><a href="#grid-proof" class="nav-link"><span class="nav-icon">✓</span> Verification</a><a href="#insights" class="nav-link"><span class="nav-icon">≋</span> Decision evidence</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-status"><span class="live-dot"></span><span>Optimization engine<small id="side-engine">Connecting…</small></span></div>
+        <div class="side-foot">RESEARCH PROTOTYPE <strong>v2.0.0</strong><br />Synthetic factory scenario</div>
+      </div>
+    </aside>
+    <main class="main" id="overview">
+      <header class="topbar">
+        <div class="crumb">Operations <span>/</span> Factory 01 <span>/</span> Digital twin</div>
+        <div class="top-actions"><span class="mode-indicator"><span class="live-dot"></span> SYNTHETIC DIGITAL TWIN</span><span class="profile">GF</span></div>
+      </header>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="line"></span> OPTIMIZE THE ENERGY THAT POWERS PRODUCTION</p>
+          <h1>Factory power.<br /><span>Under control.</span></h1>
+          <p class="subtitle">A connected planning console for solar, battery storage, production jobs and constrained grid supply. Every dispatch decision is computed, not simulated visually.</p>
+          <div class="hero-cta"><button id="run-button" class="button primary" type="button"><span class="button-spark">✦</span><span id="run-label">Run optimization</span><span class="button-arrow">↗</span></button><button id="export-button" class="button secondary" type="button" disabled title="Export the current computed schedule and hourly dispatch as CSV">↓ Export dispatch CSV</button><span id="run-status" role="status" aria-live="polite" role="status" aria-live="polite">Ready for simulation</span></div>
+        </div>
+        <div class="hero-art" aria-hidden="true"><div class="hero-telemetry"><div class="telemetry-header"><span class="pulse-square"></span> SYSTEM OPERATIONS <span>SIMULATION</span></div><div class="telemetry-line"><span>01</span><span>GRID CONNECTION</span><strong id="hero-grid">—</strong></div><div class="telemetry-line"><span>02</span><span>PV GENERATION</span><strong id="hero-solar">—</strong></div><div class="telemetry-line"><span>03</span><span>BATTERY STORAGE</span><strong id="hero-battery">—</strong></div><div class="telemetry-line"><span>04</span><span>PRODUCTION LOAD</span><strong id="hero-load">—</strong></div></div></div>
+      </section>
+      <section class="control-panel" id="scenario" aria-label="Optimization scenarios">
+        <div class="control-title"><span class="tiny-icon">☷</span><span>Simulation controls<small>Change a constraint and recalculate the operating plan</small></span></div>
+        <div class="control-grid">
+          <label class="control-field">Operating scenario<select id="preset"><option value="grid-stress">Grid stress · 6-hour cap</option><option value="normal">Normal grid supply</option><option value="cloudy">Low solar generation</option><option value="high-tariff">Evening tariff shock</option><option value="production-surge">Production demand surge</option><option value="battery-limited">Battery derating</option><option value="emergency-outage">Emergency · 2-hour grid outage</option></select></label>
+          <label class="control-field">Solar availability <span id="solar-val">100%</span><input id="solar-scale" type="range" min="25" max="150" step="5" value="100" /></label>
+          <label class="control-field">Electricity tariff <span id="tariff-val">100%</span><input id="tariff-scale" type="range" min="50" max="200" step="10" value="100" /></label>
+          <label class="control-field">Carbon price <span id="carbon-val">₹0 /kg</span><input id="carbon-price" type="range" min="0" max="15" step="1" value="0" /></label>
+          <label class="control-field">Factory demand <span id="demand-val">100%</span><input id="demand-scale" type="range" min="75" max="135" step="5" value="100" /></label>
+          <label class="control-field">Battery capacity <span id="capacity-val">72 kWh</span><input id="battery-capacity" type="range" min="36" max="120" step="4" value="72" /></label>
+          <label class="control-field">Battery wear allowance <span id="wear-val">₹0.15 /kWh throughput</span><input id="battery-wear" type="range" min="0" max="20" step="0.05" value="0.15" /></label>
+          <label class="control-field">Evening grid cap <span id="grid-val">86 kW</span><input id="grid-cap" type="range" min="60" max="165" step="1" value="86" /></label>
+        </div>
+      </section>
+      <section class="mission-console card" id="mission-console" aria-label="Interactive operating missions">
+        <div class="mission-head"><div><p class="overline">MISSION CONTROL / TRY A REAL SCENARIO</p><h3>One click. A different operating reality.</h3><p>Every mission updates the physical inputs and runs the real MILP solver.</p></div><button id="reset-controls" class="button secondary compact" type="button">↺ Reset all inputs</button></div>
+        <div class="mission-grid" role="group" aria-label="Launch optimization missions">
+          <button type="button" class="mission-tile" data-mission="normal"><span class="mission-symbol">☀</span><strong>Sunny production</strong><small>Full grid supply · standard demand</small><span class="mission-action">Run scenario ↗</span></button>
+          <button type="button" class="mission-tile" data-mission="cloudy"><span class="mission-symbol">☁</span><strong>Solar shortfall</strong><small>Lower PV, stress battery scheduling</small><span class="mission-action">Run scenario ↗</span></button>
+          <button type="button" class="mission-tile" data-mission="high-tariff"><span class="mission-symbol">₹</span><strong>Tariff shock</strong><small>Cost pressure in evening hours</small><span class="mission-action">Run scenario ↗</span></button>
+          <button type="button" class="mission-tile" data-mission="emergency-outage"><span class="mission-symbol">⚠</span><strong>Grid blackout</strong><small>Two-hour outage · critical load protection</small><span class="mission-action">Run scenario ↗</span></button>
+        </div>
+      </section>
+      <section class="card command-room" id="command-room" aria-label="Interactive modeled energy dispatch command center">
+        <div class="command-header">
+          <div><p class="overline">OPERATIONS DIGITAL TWIN / FACTORY 01</p><h2>Energy grid overview <span class="sim-pill">● SYNTHETIC DATA</span></h2><p>Explore any modeled hour to inspect physical energy balance and machine dispatch.</p></div>
+          <div class="command-time"><span>SIMULATED OPERATING HOUR</span><strong id="twin-time">08:00</strong><small>1-HOUR DISPATCH RESOLUTION</small></div>
+        </div>
+        <div class="room-layout">
+          <div class="network-stage">
+            <div class="network-head"><span>MICROGRID SINGLE-LINE VIEW</span><span id="twin-plan-status">AWAITING OPTIMIZATION</span></div>
+            <svg viewBox="0 0 830 350" role="img" aria-label="Interactive energy connections: solar generation, external grid, battery, energy bus and industrial machines" class="twin-svg">
+              <defs><linearGradient id="pipeGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4e97b6"/><stop offset="100%" stop-color="#63e3bd"/></linearGradient></defs>
+              <g class="conduit"><path d="M174 77 H309 V162 H382"/><path d="M174 175 H382"/><path d="M174 272 H309 V189 H382"/><path d="M518 176 H602 V83 H661"/><path d="M602 176 V267 H661"/></g>
+              <g class="moving-flows" aria-hidden="true"><path d="M174 77 H309 V162 H382"/><path d="M174 175 H382"/><path d="M174 272 H309 V189 H382"/><path d="M518 176 H602 V83 H661"/><path d="M602 176 V267 H661"/></g>
+              <g class="twin-node source" transform="translate(18 31)"><rect width="156" height="92" rx="12"/><text class="node-type" x="15" y="23">☀  SOLAR ARRAY</text><text class="node-value" x="15" y="56" id="twin-solar">—</text><text class="node-sub" x="15" y="77">AVAILABLE / USED</text></g>
+              <g class="twin-node source" transform="translate(18 129)"><rect width="156" height="92" rx="12"/><text class="node-type" x="15" y="23">⌁  UTILITY GRID</text><text class="node-value" x="15" y="56" id="twin-grid">—</text><text class="node-sub" x="15" y="77" id="twin-grid-cap">IMPORT / CAP</text></g>
+              <g class="twin-node battery" transform="translate(18 225)"><rect width="156" height="92" rx="12"/><text class="node-type" x="15" y="23">ϟ  BATTERY BESS</text><text class="node-value" x="15" y="56" id="twin-battery">—</text><text class="node-sub" x="15" y="77" id="twin-battery-mode">CHARGE / DISCHARGE</text></g>
+              <g class="bus-core" transform="translate(382 108)"><rect width="136" height="132" rx="15"/><text class="bus-symbol" x="68" y="48" text-anchor="middle">ϟ</text><text class="bus-title" x="68" y="78" text-anchor="middle">POWER BUS</text><text class="bus-value" x="68" y="107" text-anchor="middle" id="twin-bus">—</text></g>
+              <g class="twin-node demand" transform="translate(661 37)"><rect width="156" height="92" rx="12"/><text class="node-type" x="15" y="23">▤  FACTORY LOAD</text><text class="node-value" x="15" y="56" id="twin-load">—</text><text class="node-sub" x="15" y="77">FIXED + FLEXIBLE</text></g>
+              <g class="twin-node load" transform="translate(661 222)"><rect width="156" height="92" rx="12"/><text class="node-type" x="15" y="23">▦  ACTIVE MACHINES</text><text class="node-value" x="15" y="56" id="twin-machines">—</text><text class="node-sub" x="15" y="77">SCHEDULED THIS HOUR</text></g>
+              <text class="microgrid-footnote" x="416" y="331" text-anchor="middle">ILLUSTRATIVE TOPOLOGY · HOURLY SOLVER OUTPUT · NOT A LIVE SCADA CONNECTION</text>
+            </svg>
+            <div class="twin-timeline"><button id="hour-prev" type="button" aria-label="Previous simulation hour">←</button><input id="hour-slider" type="range" min="0" max="11" step="1" value="0" aria-label="Simulated hour"/><button id="hour-next" type="button" aria-label="Next simulation hour">→</button><button id="hour-play" type="button" aria-pressed="false">▶ Play</button></div>
+            <div class="hour-ticks"><span>08:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>19:00</span></div>
+          </div>
+          <div class="dispatch-rail"><div class="rail-title">DISPATCH TELEMETRY <span>SIMULATED</span></div>
+            <div class="rail-metric"><span>Solar utilized</span><strong id="rail-solar">—</strong><div class="rail-track"><i id="rail-solar-bar"></i></div></div>
+            <div class="rail-metric"><span>Grid import capacity</span><strong id="rail-grid">—</strong><div class="rail-track"><i id="rail-grid-bar"></i></div></div>
+            <div class="rail-metric"><span>Battery state of charge</span><strong id="rail-soc">—</strong><div class="rail-track"><i id="rail-soc-bar"></i></div></div>
+            <div class="rail-metric"><span>Electricity tariff</span><strong id="rail-tariff">—</strong></div>
+            <div class="rail-metric"><span>Hourly power balance</span><strong id="rail-balance">—</strong></div>
+            <div class="rail-machines"><span>ACTIVE PRODUCTION TASKS</span><div id="active-machines">Run optimization to inspect</div></div>
+          </div>
+        </div>
+        <div class="command-foot"><span><i class="legend-dot solar"></i> Solar &nbsp; <i class="legend-dot grid"></i> Utility &nbsp; <i class="legend-dot demand"></i> Production</span><span>What-if preview · Physical balance solved by SciPy HiGHS</span></div>
+      </section>
+      <section class="card action-center" id="operations" aria-label="Computed operational advisory center">
+        <div class="panel-top"><div><p class="overline">OPERATOR INTELLIGENCE / VERIFIED PLAN SIGNALS</p><h3>Actions worth your attention</h3><p>Condition-based observations from the selected optimized strategy. Choose an alert to switch to its computed dispatch hour.</p></div><div class="operator-tools"><span id="alert-count" class="alert-counter">Awaiting plan</span><button type="button" id="jump-peak" class="button secondary compact">↗ Jump to peak hour</button></div></div>
+        <div id="operator-alerts" class="alert-grid" aria-live="polite"><div class="skeleton">Computing operational signals…</div></div>
+        <div id="hour-analysis" class="hour-analysis">Select an hour to see a breakdown.</div>
+      </section>
+      <div class="section-heading"><div><p class="overline">PLAN PERFORMANCE</p><h2>Results, not promises.</h2></div><span class="period">12 HOUR PLANNING WINDOW · 08:00–20:00</span></div>
+      <section class="kpi-grid" aria-label="Optimization results">
+        <article class="kpi card"><div class="kpi-label">Estimated operating cost <span>↗</span></div><div class="kpi-value" id="optimized-cost">—</div><div class="kpi-foot"><span id="cost-delta" class="positive">Awaiting scenario</span><span>vs feasible baseline</span></div></article>
+        <article class="kpi card"><div class="kpi-label">Peak grid demand <span>⌁</span></div><div class="kpi-value" id="peak-demand">—</div><div class="kpi-foot"><span id="peak-delta" class="positive">Awaiting scenario</span><span>grid connection</span></div></article>
+        <article class="kpi card"><div class="kpi-label">Solar energy utilized <span>☼</span></div><div class="kpi-value" id="solar-used">—</div><div class="kpi-foot"><span id="solar-rate" class="neutral">—</span><span>available generation</span></div></article>
+        <article class="kpi card"><div class="kpi-label">Modeled grid emissions <span>◇</span></div><div class="kpi-value" id="emissions">—</div><div class="kpi-foot"><span id="emissions-delta" class="neutral">Not yet calculated</span><span>vs baseline</span></div></article>
+      </section>
+      <section class="card decision-lab" id="decision-lab" aria-label="Cost and carbon decision comparison">
+        <div class="panel-top"><div><p class="overline">DECISION INTELLIGENCE / THREE OPTIMIZATION STRATEGIES</p><h3>Cost × carbon trade-off explorer</h3><p>Choose a Pareto candidate to inspect its actual machine schedule, energy dispatch, and verified constraints.</p></div><span class="sim-pill">MILP RESULTS · SAME CONSTRAINTS</span></div>
+        <div class="decision-layout"><div class="strategy-choices" id="strategy-choices" role="group" aria-label="Optimization priority"><div class="skeleton">Solving strategy portfolio…</div></div>
+        <div class="frontier-visual"><div class="frontier-header"><strong>Operations frontier</strong><span>Lower cost ↓ / lower modeled emissions ←</span></div><div id="frontier-chart" class="frontier-chart" aria-label="Cost versus modeled grid emissions visualization"></div><p id="strategy-note" class="frontier-caption">Objective weights are transparent illustrative carbon shadow prices, not real carbon credit valuations.</p></div></div>
+      </section>
+      <section class="card experiment-lab" id="experiment-lab" aria-label="Saved experiment comparison">
+        <div class="panel-top"><div><p class="overline">EXPERIMENT BENCH / BEFORE AND AFTER</p><h3>Prove a scenario change</h3><p>Capture your current computed plan, alter an assumption, then compare two genuine MILP solutions side-by-side.</p></div><span class="sim-pill">SESSION ONLY · SYNTHETIC</span></div>
+        <div class="experiment-actions"><button class="button primary compact" id="save-experiment" type="button" disabled>＋ Pin current run</button><button class="button secondary compact" id="download-brief" type="button" disabled>↓ Download decision brief</button><span id="experiment-status" role="status">Pin a run, then try another operating scenario.</span></div>
+        <div class="experiment-results" id="experiment-results"><div class="placeholder-compare"><span>01</span><strong>Pin a reference run</strong><p>Your current strategy, metrics and input assumptions will be saved in this browser session. No server storage required.</p></div><div class="placeholder-compare"><span>02</span><strong>Change conditions and compare</strong><p>Try a tariff shock or solar shortfall to see the quantified consequences.</p></div></div>
+      </section>
+      <section class="card intelligence-panel" id="forecast-risk" aria-labelledby="risk-heading">
+        <div class="panel-top"><div><p class="overline">FORECAST RISK / BATTERY ECONOMICS</p><h3 id="risk-heading">Test the assumptions behind the plan</h3><p>Analyze the solved scenario and selected strategy. Try a wear allowance of ₹8/kWh to explore dispatch sensitivity.</p></div><button id="analyze-button" class="button secondary" type="button" disabled>Analyze forecast &amp; battery</button></div>
+        <p id="intelligence-status" role="status" aria-live="polite">Run an optimization first.</p>
+        <div id="intelligence-results" hidden>
+          <div class="intelligence-tabs" role="group" aria-label="Analysis view"><button id="risk-tab" class="switch active" type="button" aria-pressed="true">Forecast risk</button><button id="health-tab" class="switch" type="button" aria-pressed="false">Battery economics</button></div>
+          <div id="risk-view"></div><div id="health-view" hidden></div>
+        </div>
+      </section>
+      <section class="grid-proof" id="grid-proof" aria-label="Emergency response and mathematical verification">
+        <article class="card resilience-panel"><div class="panel-top"><div><p class="overline">OPERATIONAL RESILIENCE</p><h3>Outage-response planner</h3><p>Critical fixed demand is protected. Only limited noncritical fixed loads may be curtailed.</p></div><span class="proof-icon">ϟ</span></div><div id="resilience-details" class="resilience-details">Run an emergency scenario to inspect protection and curtailment.</div><button class="button secondary" type="button" id="emergency-button">Simulate 16:00–18:00 outage ↗</button></article>
+        <article class="card audit-panel"><div class="panel-top"><div><p class="overline">INDEPENDENT CONSTRAINT AUDIT</p><h3>Optimization you can verify</h3><p>Post-solve energy, battery, grid and production invariants.</p></div><span id="audit-status" class="audit-status">AWAITING SOLVE</span></div><div class="audit-grid" id="audit-details"><div class="skeleton">Waiting for verified dispatch…</div></div><p class="frontier-caption">Rounded solver outputs independently checked; the audit does not certify a physical power system.</p></article>
+      </section>
+      <section class="chart-grid" id="energy-flow">
+        <article class="card large-chart"><div class="panel-top"><div><p class="overline">ENERGY DISPATCH</p><h3>Where every kilowatt goes</h3><p>Hourly grid import, solar contribution and battery activity</p></div><div class="legend"><span><i class="legend-dot grid"></i>Grid</span><span><i class="legend-dot solar"></i>Solar</span><span><i class="legend-dot demand"></i>Total demand</span></div></div><div class="chart-wrap" id="power-chart"><div class="skeleton">Run the optimization to visualize dispatch</div></div><div class="chart-footer"><span>Hourly power · kW</span><span><i class="mini-square"></i> Amber zone indicates grid-constrained hours</span></div></article>
+        <article class="card battery-panel"><div class="panel-top"><div><p class="overline">FLEXIBILITY ASSET</p><h3>Battery intelligence</h3><p>Charge only when it creates value</p></div><span class="asset-icon">ϟ</span></div><div class="battery-visual"><div class="battery-container"><div id="battery-fill" class="battery-fill" style="height:36%"></div><span class="battery-num" id="battery-soc">—</span><span class="battery-unit">kWh at close</span></div><div class="battery-tip"></div></div><div class="battery-progress"><span>State of charge at final hour</span><strong id="battery-pct">—</strong></div><div class="meter"><span id="soc-bar"></span></div><div class="battery-facts"><div><span>Nominal capacity</span><strong id="battery-cap-label">72 kWh</strong></div><div><span>Dispatch limit</span><strong id="battery-power-label">±27 kW</strong></div><div><span>Roundtrip efficiency</span><strong>88.4%</strong></div></div></article>
+      </section>
+      <section class="card schedule-card" id="production"><div class="panel-top"><div><p class="overline">INDUSTRIAL WORKLOAD</p><h3>Deadline-aware production schedule</h3><p>Every machine finishes inside its permitted time window</p></div><div class="schedule-switch" role="group" aria-label="Schedule to display"><button id="show-optimized" class="switch active" aria-pressed="true">Optimized</button><button id="show-baseline" class="switch" aria-pressed="false">Baseline</button></div></div><div class="schedule-scroller"><div class="schedule-grid" id="gantt"><div class="skeleton">Schedule will appear after optimization</div></div></div><div class="machine-inspector" id="machine-inspector" aria-live="polite"><div class="inspector-head"><span>SELECT A MACHINE / EXPLORE SCHEDULE DECISIONS</span><strong id="inspector-name">Choose any production row</strong></div><div id="inspector-content" class="inspector-content">Click a machine name or scheduled hour to see its actual production window, energy demand, baseline movement and deadline slack.</div></div><div class="schedule-footer"><span><span class="verified-icon">✓</span><span id="job-summary">5 flexible industrial tasks modeled</span></span><span>Hourly, non-preemptible execution</span></div></section>
+      <section class="lower-grid" id="insights">
+        <article class="card comparison-panel"><div class="panel-top"><div><p class="overline">VALIDATED COMPARISON</p><h3>What's different?</h3><p>Both plans meet exactly the same grid and production limits</p></div></div><div id="comparisons"><div class="skeleton">Optimization needed</div></div><p class="explain-text" id="tradeoff-note">All percentages and savings are calculated from solver output, not made-up estimates.</p></article>
+        <article class="card explanation-panel"><div class="panel-top"><div><p class="overline">EXPLAINABLE INTELLIGENCE</p><h3>Why this plan?</h3><p>Operationally relevant decisions, not opaque AI claims</p></div></div><div id="insights-list"><div class="skeleton">Decision evidence will appear here</div></div><div class="engine-badge"><span class="live-dot"></span> SciPy / HiGHS mixed-integer optimization · evidence from solver decisions</div></article>
+      </section>
+      <section class="card operational-note"><span class="note-mark">!</span><div><strong>Engineering boundary</strong><p>Grid Flex uses synthetic loads, solar forecasts, tariffs and grid constraints. Play mode replays a computed 12-hour plan; it does not connect to live equipment, perform protection functions or autonomously control a facility.</p></div></section>
+      <footer class="footer"><span><strong>GRID FLEX</strong> · INDUSTRIAL ENERGY INTELLIGENCE</span><span>Research prototype. All site data and tariffs synthetic. No physical equipment control or real-world saving claims.</span></footer>
+    </main>
+  </div>
+  <script src="./app.js?v=final-1" defer></script>
+  <script src="./intelligence.js?v=final-1" defer></script>
+</body>
+</html>
