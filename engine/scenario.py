@@ -67,6 +67,7 @@ def scenario(preset="grid-stress", solar_scale=1.0, tariff_multiplier=1.0,
         data["solar_kw"] = [round(x*.5,2) for x in data["solar_kw"]]
     if preset == "high-tariff":
         data["tariff_inr_per_kwh"] = [v*(1.5 if t>=6 else 1) for t,v in enumerate(data["tariff_inr_per_kwh"])]
+    requested_demand_scale = demand_scale
     if preset == "production-surge":
         demand_scale *= 1.16
     if preset == "battery-limited":
@@ -87,6 +88,7 @@ def scenario(preset="grid-stress", solar_scale=1.0, tariff_multiplier=1.0,
     data["carbon_price_inr_per_kg"] = carbon_price
     data["preset"] = preset
     data["controls"] = {"solar_scale":solar_scale,"tariff_multiplier":tariff_multiplier,
-                         "demand_scale":round(demand_scale,4),"battery_capacity":battery_capacity,
+                         "demand_scale":round(demand_scale,4),
+                         "requested_demand_scale":requested_demand_scale,"battery_capacity":battery_capacity,
                          "evening_grid_cap":evening_grid_cap,"carbon_price":carbon_price,"battery_wear_cost":battery_wear_cost}
     return data
