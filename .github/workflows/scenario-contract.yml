@@ -1,0 +1,30 @@
+name: Verify synthetic scenario contracts
+
+on:
+  push:
+    paths:
+      - 'engine/scenario.py'
+      - 'tests/test_scenario_*nov20.py'
+      - '.github/workflows/scenario-contract.yml'
+  pull_request:
+    paths:
+      - 'engine/scenario.py'
+      - 'tests/test_scenario_*nov20.py'
+      - '.github/workflows/scenario-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  scenario-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run deterministic scenario contract tests
+        run: python -m unittest discover -s tests -p 'test_scenario_*nov20.py' -v
