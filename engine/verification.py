@@ -7,7 +7,7 @@ from math import isfinite
 
 TOL = 0.04
 
-def verify_plan(data, plan):
+def _verify_plan_unchecked(data, plan):
     issues=[]
     checked=0
     jobs_by_id={job['id']:job for job in data['jobs']}
@@ -90,3 +90,33 @@ def verify_plan(data, plan):
                'scheduled_jobs':len(seen),'outage_hours':data.get('outage_hours',[]),
                'noncritical_unserved_kwh':round(shed_total,3),
                'critical_load_preserved':True if not issues else None}}
+
+
+def verify_plan(data, plan):
+    """Audit even malformed serialized plans without crashing the API.
+
+    Solver output is a trust boundary. A malformed job, slot or metric must
+    fail verification, not raise an exception or be treated as a valid plan.
+    The error category is intentionally returned without raw payload values.
+    """
+    if not isinstance(data, dict) or not isinstance(plan, dict):
+        error = "Invalid document type"
+    else:
+        try:
+            return _verify_plan_unchecked(data, plan)
+        except (KeyError, TypeError, ValueError, IndexError, AttributeError, OverflowError) as exc:
+            error = f"Malformed dispatch plan ({type(exc).__name__})"
+
+    return {
+        "passed": False,
+        "checks_performed": 0,
+        "violations": [error],
+        "summary": {
+            "max_power_balance_error_kw": None,
+            "max_soc_bound_violation_kwh": None,
+            "scheduled_jobs": 0,
+            "outage_hours": data.get("outage_hours", []) if isinstance(data, dict) else [],
+            "noncritical_unserved_kwh": None,
+            "critical_load_preserved": None,
+        },
+    }
