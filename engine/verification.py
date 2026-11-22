@@ -92,6 +92,49 @@ def _verify_plan_unchecked(data, plan):
                'critical_load_preserved':True if not issues else None}}
 
 
+
+# Serialization is a trust boundary. In particular, bool is a subclass of int
+# in Python and must not be allowed to masquerade as 0 or 1 kW.
+_NUMERIC_SLOT_FIELDS = (
+    'grid_kw', 'solar_used_kw', 'charge_kw', 'discharge_kw', 'base_kw',
+    'flexible_kw', 'noncritical_shed_kw', 'soc_kwh', 'grid_limit_kw',
+    'solar_available_kw',
+)
+
+
+def _validate_serialized_fields(plan):
+    if (not isinstance(plan.get('jobs'), list)
+            or not isinstance(plan.get('slots'), list)
+            or not isinstance(plan.get('metrics'), dict)):
+        raise TypeError('Invalid plan structure')
+    for slot in plan['slots']:
+        if not isinstance(slot, dict):
+            raise TypeError('Invalid dispatch slot')
+        for field in _NUMERIC_SLOT_FIELDS:
+            value = slot.get(field)
+            if (isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not isfinite(value)):
+                raise ValueError('Invalid dispatch number')
+    for job in plan['jobs']:
+        if not isinstance(job, dict):
+            raise TypeError('Invalid scheduled job')
+        for field in ('start', 'end'):
+            if type(job.get(field)) is not int:
+                raise ValueError('Invalid job time')
+        value = job.get('power_kw')
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not isfinite(value)):
+            raise ValueError('Invalid job power')
+    for value in plan['metrics'].values():
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not isfinite(value)):
+            raise ValueError('Invalid reported metric')
+    carbon = plan.get('carbon_weight_inr_per_kg', 0)
+    if (isinstance(carbon, bool) or not isinstance(carbon, (int, float))
+            or not isfinite(carbon)):
+        raise ValueError('Invalid carbon shadow price')
+
+
 def verify_plan(data, plan):
     """Audit even malformed serialized plans without crashing the API.
 
@@ -103,6 +146,7 @@ def verify_plan(data, plan):
         error = "Invalid document type"
     else:
         try:
+            _validate_serialized_fields(plan)
             return _verify_plan_unchecked(data, plan)
         except (KeyError, TypeError, ValueError, IndexError, AttributeError, OverflowError) as exc:
             error = f"Malformed dispatch plan ({type(exc).__name__})"
