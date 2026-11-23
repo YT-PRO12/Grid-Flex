@@ -41,6 +41,8 @@ def _verify_plan_unchecked(data, plan):
         check(abs(base-data['base_kw'][t])<=TOL,f'Fixed load telemetry mismatch at {data["hours"][t]}')
         check(abs(s.get('grid_limit_kw',-1)-data['grid_limit_kw'][t])<=TOL,f'Grid-limit telemetry mismatch at {data["hours"][t]}')
         check(abs(s.get('solar_available_kw',-1)-data['solar_kw'][t])<=TOL,f'Solar-forecast telemetry mismatch at {data["hours"][t]}')
+        check(s.get('time')==data['hours'][t],f'Slot timestamp mismatch at {data["hours"][t]}')
+        check(abs(s['tariff']-data['tariff_inr_per_kwh'][t])<=TOL,f'Tariff telemetry mismatch at {data["hours"][t]}')
         balance=grid+solar+discharge+shed-charge-base-flexible
         max_balance=max(max_balance,abs(balance))
         check(abs(balance)<=TOL,f'Energy imbalance at {data["hours"][t]}: {balance:.3f} kW')
@@ -98,7 +100,7 @@ def _verify_plan_unchecked(data, plan):
 _NUMERIC_SLOT_FIELDS = (
     'grid_kw', 'solar_used_kw', 'charge_kw', 'discharge_kw', 'base_kw',
     'flexible_kw', 'noncritical_shed_kw', 'soc_kwh', 'grid_limit_kw',
-    'solar_available_kw',
+    'solar_available_kw', 'tariff',
 )
 
 
