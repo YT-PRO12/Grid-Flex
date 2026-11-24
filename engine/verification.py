@@ -64,6 +64,7 @@ def _verify_plan_unchecked(data, plan):
     check(soc>=battery['initial_kwh']-TOL,'Ending battery SOC below required reserve')
     m=plan.get('metrics',{})
     check(abs(shed_total-m.get('unserved_noncritical_kwh',0))<=.06,'Unserved energy total mismatch')
+    check(m.get('critical_load_served_pct')==100.0,'Critical-load service percentage mismatch')
     slots=plan.get('slots',[])
     energy=sum(s['grid_kw']*data['tariff_inr_per_kwh'][t] for t,s in enumerate(slots[:h]))
     peak=max((s['grid_kw'] for s in slots),default=0)
