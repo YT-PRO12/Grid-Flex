@@ -91,13 +91,14 @@ def lambda_handler(event,context):
     body=None
     if method=='POST':
         raw=event.get('body','') or '{}'
-        if len(raw.encode('utf-8'))>MAX_JSON_BYTES:
-            code,payload=413,{"error":"Request exceeds 16 KB"}
-            return _lambda_response(code,payload)
+        if not isinstance(raw,str):
+            return _lambda_response(400,{"error":"Invalid JSON"})
         try:
-            if event.get('isBase64Encoded'):
+            if event.get('isBase64Encoded') is True:
                 import base64
-                raw=base64.b64decode(raw).decode('utf-8')
+                raw=base64.b64decode(raw,validate=True).decode('utf-8')
+            if len(raw.encode('utf-8'))>MAX_JSON_BYTES:
+                return _lambda_response(413,{"error":"Request exceeds 16 KB"})
             body=json.loads(raw)
         except (ValueError,TypeError,UnicodeError):
             return _lambda_response(400,{"error":"Invalid JSON"})
